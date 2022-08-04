@@ -1,0 +1,36 @@
+# Deployment da Aplicação Conversão de temperatura
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversaotemperatura
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: conversaotemperatura
+  template:
+      metadata:
+        labels: 
+          app: conversaotemperatura
+      spec: 
+        containers:
+          - name: conversaotemperatura
+            image: gustavotomaz/conversao-temperatura:v1  #Imagem do DockerHub
+            ports:
+              - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: conversaotemperatura
+spec: 
+  selector:
+    app: conversaotemperatura
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080    # Redirecionar para o target port da app
+    nodePort: 30000   # Porta 30000 especificada no k3d através do port bind no load balancer
+  type: NodePort
